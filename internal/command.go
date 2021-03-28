@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/briandowns/spinner"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -57,6 +58,11 @@ func (r *RunCommand) Run(args []string) int {
 	ticker := time.NewTicker(time.Duration(interval) * time.Second)
 	defer ticker.Stop()
 
+	s := spinner.New(spinner.CharSets[12], 100*time.Millisecond)
+	s.Prefix = "Waiting for test plan to finish. "
+	s.Start()
+	defer s.Stop()
+
 	var testResult *TestPlanResult
 
 	for {
@@ -77,6 +83,7 @@ func (r *RunCommand) Run(args []string) int {
 					return ExitCodeError
 				}
 
+				fmt.Print("\r\033[K")
 				fmt.Println(string(jsonStr))
 				return ExitCodeOk
 			}
