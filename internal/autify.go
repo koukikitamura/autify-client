@@ -3,10 +3,13 @@ package internal
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 const AccessTokenEnvName = "AUTIFY_PERSONAL_ACCESS_TOKEN"
@@ -46,11 +49,89 @@ func NewAutfiy(accessToken string, options ...AutifyOption) *Autify {
 	return autify
 }
 
+type RunResult struct {
+	TestPlanResultId string `json:"id"`
+	Type             string `json:"type"`
+	Attributes       struct {
+		Id int `json:"id"`
+	} `json:"attributes"`
+}
+
 type Scenario struct {
 	Id        int       `json:"id"`
 	Name      string    `json:"name"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type TestPlan struct {
+	Id        int       `json:"id"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type TestPlanResult struct {
+	Id         int       `json:"id"`
+	Status     string    `json:"status"`
+	Duration   int       `json:"duration"`
+	StartedAt  time.Time `json:"started_at"`
+	FinishedAt time.Time `json:"finished_at"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
+	TestPlan   `json:"test_plan"`
+}
+
+const (
+	TestPlanStatusWarning = "warning"
+	TestPlanStatusQueing  = "queuing"
+	TestPlanStatuWaiting  = "waiting"
+	TestPlanStatusRunning = "running"
+	TestPlanStatusPassed  = "passed"
+	TestPlanStatusFailed  = "failed"
+)
+
+type RuntTestPlanResponse struct {
+	Data RunResult `json:"data"`
+}
+
+func (a *Autify) RunTestPlan(planId int) (*RunResult, error) {
+	path := fmt.Sprintf("/schedules/%d", planId)
+
+	request, err := http.NewRequest(http.MethodPost, strings.Join([]string{a.baseUrl, path}, "/"), nil)
+	if err != nil {
+		return nil, err
+	}
+	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", a.accessToken))
+
+	logrus.WithFields(logrus.Fields{
+		"method": request.Method,
+		"url":    request.URL,
+	}).Debug("Request to autify")
+
+	response, err := a.httpClient.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
+
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+	logrus.WithFields(logrus.Fields{
+		"method": response.Request.Method,
+		"url":    response.Request.URL,
+		"status": response.Status,
+	}).Debug("Respond from autify")
+	logrus.Debug("Body is ", string(body))
+
+	var result RuntTestPlanResponse
+	if err := json.Unmarshal(body, &result); err != nil {
+		return nil, err
+	}
+
+	return &result.Data, nil
 }
 
 func (a *Autify) FetchScenario(projectId, scenarioId int) (*Scenario, error) {
@@ -62,54 +143,49 @@ func (a *Autify) FetchScenario(projectId, scenarioId int) (*Scenario, error) {
 	}
 	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", a.accessToken))
 
+	logrus.WithFields(logrus.Fields{
+		"method": request.Method,
+		"url":    request.URL,
+	}).Debug("Request to autify")
+
 	response, err := a.httpClient.Do(request)
 	if err != nil {
 		return nil, err
 	}
 	defer response.Body.Close()
 
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+	logrus.WithFields(logrus.Fields{
+		"method": response.Request.Method,
+		"url":    response.Request.URL,
+		"status": response.Status,
+	}).Debug("Respond from autify")
+	logrus.Debug("Body is ", string(body))
+
 	var scenario Scenario
-	if err := json.NewDecoder(response.Body).Decode(&scenario); err != nil {
+	if err := json.Unmarshal(body, &scenario); err != nil {
 		return nil, err
 	}
 
 	return &scenario, nil
 }
 
-type Result struct {
-	Id         int       `json:"id"`
-	Status     string    `json:"status"`
-	Duration   int       `json:"duration"`
-	StartedAt  time.Time `json:"started_at"`
-	FinishedAt time.Time `json:"finished_at"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
-	TestPlan   `json:"test_plan"`
-}
-
-type TestPlan struct {
-	Id        int       `json:"id"`
-	Name      string    `json:"name"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-}
-
-const (
-	ResultStatusWarning = "warning"
-	ResultStatusRunning = "running"
-	ResultStatusPassed  = "passed"
-	ResultStatusFailed  = "failed"
-)
-
-func (a *Autify) FetchResult(projectId, resultId int) (*Result, error) {
+func (a *Autify) FetchResult(projectId, resultId int) (*TestPlanResult, error) {
 	path := fmt.Sprintf("/projects/%d/results/%d", projectId, resultId)
 
 	request, err := http.NewRequest(http.MethodGet, strings.Join([]string{a.baseUrl, path}, "/"), nil)
 	if err != nil {
 		return nil, err
 	}
-
 	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", a.accessToken))
+
+	logrus.WithFields(logrus.Fields{
+		"method": request.Method,
+		"url":    request.URL,
+	}).Debug("Request to autify")
 
 	response, err := a.httpClient.Do(request)
 	if err != nil {
@@ -117,8 +193,19 @@ func (a *Autify) FetchResult(projectId, resultId int) (*Result, error) {
 	}
 	defer response.Body.Close()
 
-	var result Result
-	if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+	logrus.WithFields(logrus.Fields{
+		"method": response.Request.Method,
+		"url":    response.Request.URL,
+		"status": response.Status,
+	}).Debug("Respond from autify")
+	logrus.Debug("Body is ", string(body))
+
+	var result TestPlanResult
+	if err := json.Unmarshal(body, &result); err != nil {
 		return nil, err
 	}
 

@@ -12,3 +12,6 @@ test-scenario:
 
 test-result:
 	@./scripts/atf_result.sh
+
+test-run:
+	@./scripts/atf_run.sh

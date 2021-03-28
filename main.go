@@ -18,6 +18,9 @@ func main() {
 	c.Args = os.Args[1:]
 
 	c.Commands = map[string]cli.CommandFactory{
+		internal.RunCommandName: func() (cli.Command, error) {
+			return &internal.RunCommand{}, nil
+		},
 		internal.ScenarioCommandName: func() (cli.Command, error) {
 			return &internal.ScenarioCommand{}, nil
 		},
