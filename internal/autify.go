@@ -131,6 +131,10 @@ func (a *Autify) RunTestPlan(planId int) (*RunResult, error) {
 		return nil, errors.New("Unauthorized: Bad credentials")
 	}
 
+	if response.StatusCode == http.StatusNotFound {
+		return nil, errors.New("Not found test plan")
+	}
+
 	var result RuntTestPlanResponse
 	if err := json.Unmarshal(body, &result); err != nil {
 		return nil, errors.WithStack(err)
@@ -174,6 +178,10 @@ func (a *Autify) FetchScenario(projectId, scenarioId int) (*Scenario, error) {
 		return nil, errors.New("Unauthorized: Bad credentials")
 	}
 
+	if response.StatusCode == http.StatusNotFound {
+		return nil, errors.New("Not found scenario")
+	}
+
 	var scenario Scenario
 	if err := json.Unmarshal(body, &scenario); err != nil {
 		return nil, errors.WithStack(err)
@@ -215,6 +223,10 @@ func (a *Autify) FetchResult(projectId, resultId int) (*TestPlanResult, error) {
 
 	if response.StatusCode == http.StatusUnauthorized {
 		return nil, errors.New("Unauthorized: Bad credentials")
+	}
+
+	if response.StatusCode == http.StatusNotFound {
+		return nil, errors.New("Result is not found")
 	}
 
 	var result TestPlanResult

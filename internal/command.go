@@ -56,6 +56,11 @@ func (r *RunCommand) Run(args []string) int {
 		return ExitCodeError
 	}
 
+	if projectId < 0 || planId < 0 {
+		logrus.Error("project-id and plan-id is greater than or equal to zero.")
+		return ExitCodeError
+	}
+
 	if debug {
 		logrus.SetLevel(logrus.DebugLevel)
 	}
@@ -84,6 +89,7 @@ func (r *RunCommand) Run(args []string) int {
 			testResult, err = autify.FetchResult(projectId, runResult.Attributes.Id)
 
 			if err != nil {
+				fmt.Print("\r\033[K")
 				logrus.Errorf("%+v", err)
 				return ExitCodeError
 			}
@@ -91,12 +97,13 @@ func (r *RunCommand) Run(args []string) int {
 				testResult.Status != TestPlanStatusQueuing &&
 				testResult.Status != TestPlanStatusRunning {
 				jsonStr, err := json.Marshal(*testResult)
+
+				fmt.Print("\r\033[K")
 				if err != nil {
 					logrus.Errorf("%+v", err)
 					return ExitCodeError
 				}
 
-				fmt.Print("\r\033[K")
 				fmt.Println(string(jsonStr))
 				return ExitCodeOk
 			}
@@ -131,6 +138,11 @@ func (s *ScenarioCommand) Run(args []string) int {
 	flags.BoolVar(&debug, "debug", false, "Print excution logs")
 
 	if err := flags.Parse(args); err != nil {
+		return ExitCodeError
+	}
+
+	if projectId < 0 || scenarioId < 0 {
+		logrus.Error("project-id and scenario-id is greater than or equal to zero.")
 		return ExitCodeError
 	}
 
@@ -180,6 +192,11 @@ func (r *ResultCommand) Run(args []string) int {
 	flags.BoolVar(&debug, "debug", false, "Print excution logs")
 
 	if err := flags.Parse(args); err != nil {
+		return ExitCodeError
+	}
+
+	if projectId < 0 || resultId < 0 {
+		logrus.Error("project-id and result-id is greater than or equal to zero.")
 		return ExitCodeError
 	}
 
