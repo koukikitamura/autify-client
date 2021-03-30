@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -84,7 +85,7 @@ type TestPlanResult struct {
 
 const (
 	TestPlanStatusWarning = "warning"
-	TestPlanStatusQueing  = "queuing"
+	TestPlanStatusQueuing = "queuing"
 	TestPlanStatuWaiting  = "waiting"
 	TestPlanStatusRunning = "running"
 	TestPlanStatusPassed  = "passed"
@@ -100,7 +101,7 @@ func (a *Autify) RunTestPlan(planId int) (*RunResult, error) {
 
 	request, err := http.NewRequest(http.MethodPost, strings.Join([]string{a.baseUrl, path}, "/"), nil)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", a.accessToken))
 
@@ -111,13 +112,13 @@ func (a *Autify) RunTestPlan(planId int) (*RunResult, error) {
 
 	response, err := a.httpClient.Do(request)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 	defer response.Body.Close()
 
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 	logrus.WithFields(logrus.Fields{
 		"method": response.Request.Method,
@@ -128,7 +129,7 @@ func (a *Autify) RunTestPlan(planId int) (*RunResult, error) {
 
 	var result RuntTestPlanResponse
 	if err := json.Unmarshal(body, &result); err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return &result.Data, nil
@@ -139,7 +140,7 @@ func (a *Autify) FetchScenario(projectId, scenarioId int) (*Scenario, error) {
 
 	request, err := http.NewRequest(http.MethodGet, strings.Join([]string{a.baseUrl, path}, "/"), nil)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", a.accessToken))
 
@@ -150,13 +151,13 @@ func (a *Autify) FetchScenario(projectId, scenarioId int) (*Scenario, error) {
 
 	response, err := a.httpClient.Do(request)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 	defer response.Body.Close()
 
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 	logrus.WithFields(logrus.Fields{
 		"method": response.Request.Method,
@@ -167,7 +168,7 @@ func (a *Autify) FetchScenario(projectId, scenarioId int) (*Scenario, error) {
 
 	var scenario Scenario
 	if err := json.Unmarshal(body, &scenario); err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return &scenario, nil
@@ -178,7 +179,7 @@ func (a *Autify) FetchResult(projectId, resultId int) (*TestPlanResult, error) {
 
 	request, err := http.NewRequest(http.MethodGet, strings.Join([]string{a.baseUrl, path}, "/"), nil)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", a.accessToken))
 
@@ -189,13 +190,13 @@ func (a *Autify) FetchResult(projectId, resultId int) (*TestPlanResult, error) {
 
 	response, err := a.httpClient.Do(request)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 	defer response.Body.Close()
 
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 	logrus.WithFields(logrus.Fields{
 		"method": response.Request.Method,
@@ -206,7 +207,7 @@ func (a *Autify) FetchResult(projectId, resultId int) (*TestPlanResult, error) {
 
 	var result TestPlanResult
 	if err := json.Unmarshal(body, &result); err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return &result, nil

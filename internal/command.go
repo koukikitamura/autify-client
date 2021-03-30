@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/briandowns/spinner"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -53,19 +53,18 @@ func (r *RunCommand) Run(args []string) int {
 	flags.BoolVar(&debug, "debug", false, "Print excution logs")
 
 	if err := flags.Parse(args); err != nil {
-		fmt.Println(err.Error())
 		return ExitCodeError
 	}
 
 	if debug {
-		log.SetLevel(log.DebugLevel)
+		logrus.SetLevel(logrus.DebugLevel)
 	}
 
 	autify := NewAutfiy(GetAccessToken())
 
 	runResult, err := autify.RunTestPlan(planId)
 	if err != nil {
-		fmt.Println(err.Error())
+		logrus.Errorf("%+v", err)
 		return ExitCodeError
 	}
 
@@ -85,15 +84,15 @@ func (r *RunCommand) Run(args []string) int {
 			testResult, err = autify.FetchResult(projectId, runResult.Attributes.Id)
 
 			if err != nil {
-				fmt.Println(err.Error())
+				logrus.Errorf("%+v", err)
 				return ExitCodeError
 			}
 			if testResult.Status != TestPlanStatuWaiting &&
-				testResult.Status != TestPlanStatusQueing &&
+				testResult.Status != TestPlanStatusQueuing &&
 				testResult.Status != TestPlanStatusRunning {
 				jsonStr, err := json.Marshal(*testResult)
 				if err != nil {
-					fmt.Println(err.Error())
+					logrus.Errorf("%+v", err)
 					return ExitCodeError
 				}
 
@@ -136,20 +135,20 @@ func (s *ScenarioCommand) Run(args []string) int {
 	}
 
 	if debug {
-		log.SetLevel(log.DebugLevel)
+		logrus.SetLevel(logrus.DebugLevel)
 	}
 
 	autify := NewAutfiy(GetAccessToken())
 
 	scenario, err := autify.FetchScenario(projectId, scenarioId)
 	if err != nil {
-		fmt.Println(err.Error())
+		logrus.Errorf("%+v", err)
 		return ExitCodeError
 	}
 
 	jsonStr, err := json.Marshal(scenario)
 	if err != nil {
-		fmt.Println(err.Error())
+		logrus.Errorf("%+v", err)
 		return ExitCodeError
 	}
 
@@ -185,20 +184,20 @@ func (r *ResultCommand) Run(args []string) int {
 	}
 
 	if debug {
-		log.SetLevel(log.DebugLevel)
+		logrus.SetLevel(logrus.DebugLevel)
 	}
 
 	autify := NewAutfiy(GetAccessToken())
 
 	result, err := autify.FetchResult(projectId, resultId)
 	if err != nil {
-		fmt.Println(err.Error())
+		logrus.Errorf("%+v", err)
 		return ExitCodeError
 	}
 
 	jsonStr, err := json.Marshal(result)
 	if err != nil {
-		fmt.Println(err.Error())
+		logrus.Errorf("%+v", err)
 		return ExitCodeError
 	}
 
