@@ -9,10 +9,10 @@ import (
 )
 
 func main() {
-	if ok := internal.CheckAccessToken(); !ok {
-		fmt.Printf("Require %s environment variable\n", internal.AccessTokenEnvName)
-		os.Exit(internal.ExitCodeError)
-	}
+	// if ok := internal.CheckAccessToken(); !ok {
+	// 	fmt.Printf("Require %s environment variable\n", internal.AccessTokenEnvName)
+	// 	os.Exit(internal.ExitCodeError)
+	// }
 
 	c := cli.NewCLI("atf", "1.0.0")
 	c.Args = os.Args[1:]

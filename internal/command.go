@@ -21,13 +21,27 @@ const (
 	RunCommandName      = "run"
 )
 
-type RunCommand struct{}
+func RequireCredential() bool {
+	if ok := CheckAccessToken(); !ok {
+		fmt.Printf("Require %s environment variable\n", AccessTokenEnvName)
+		return false
+	}
+
+	return true
+}
+
+type RunCommand struct {
+}
 
 func (r *RunCommand) Help() string {
 	return "Run test plan"
 }
 
 func (r *RunCommand) Run(args []string) int {
+	if ok := RequireCredential(); !ok {
+		return ExitCodeError
+	}
+
 	var projectId, planId, interval, timeout int
 	var debug bool
 
@@ -105,6 +119,10 @@ func (s *ScenarioCommand) Help() string {
 }
 
 func (s *ScenarioCommand) Run(args []string) int {
+	if ok := RequireCredential(); !ok {
+		return ExitCodeError
+	}
+
 	var projectId, scenarioId int
 	var debug bool
 
@@ -150,6 +168,10 @@ func (r *ResultCommand) Help() string {
 }
 
 func (r *ResultCommand) Run(args []string) int {
+	if ok := RequireCredential(); !ok {
+		return ExitCodeError
+	}
+
 	var projectId, resultId int
 	var debug bool
 
