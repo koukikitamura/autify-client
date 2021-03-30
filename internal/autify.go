@@ -127,6 +127,10 @@ func (a *Autify) RunTestPlan(planId int) (*RunResult, error) {
 	}).Debug("Respond from autify")
 	logrus.Debug("Body is ", string(body))
 
+	if response.StatusCode == http.StatusUnauthorized {
+		return nil, errors.New("Unauthorized: Bad credentials")
+	}
+
 	var result RuntTestPlanResponse
 	if err := json.Unmarshal(body, &result); err != nil {
 		return nil, errors.WithStack(err)
@@ -166,6 +170,10 @@ func (a *Autify) FetchScenario(projectId, scenarioId int) (*Scenario, error) {
 	}).Debug("Respond from autify")
 	logrus.Debug("Body is ", string(body))
 
+	if response.StatusCode == http.StatusUnauthorized {
+		return nil, errors.New("Unauthorized: Bad credentials")
+	}
+
 	var scenario Scenario
 	if err := json.Unmarshal(body, &scenario); err != nil {
 		return nil, errors.WithStack(err)
@@ -204,6 +212,10 @@ func (a *Autify) FetchResult(projectId, resultId int) (*TestPlanResult, error) {
 		"status": response.Status,
 	}).Debug("Respond from autify")
 	logrus.Debug("Body is ", string(body))
+
+	if response.StatusCode == http.StatusUnauthorized {
+		return nil, errors.New("Unauthorized: Bad credentials")
+	}
 
 	var result TestPlanResult
 	if err := json.Unmarshal(body, &result); err != nil {
