@@ -8,11 +8,20 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// These variables are set in build step
+const (
+	Version  = "unset"
+	Revision = "unset"
+)
+
 func main() {
-	c := cli.NewCLI("atf", "1.0.0")
+	c := cli.NewCLI("atf", Version)
 	c.Args = os.Args[1:]
 
 	c.Commands = map[string]cli.CommandFactory{
+		internal.VersionCommandName: func() (cli.Command, error) {
+			return &internal.VersionCommand{Version: Version, Revision: Revision}, nil
+		},
 		internal.RunCommandName: func() (cli.Command, error) {
 			return &internal.RunCommand{}, nil
 		},

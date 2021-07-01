@@ -16,6 +16,7 @@ const (
 )
 
 const (
+	VersionCommandName  = "version"
 	ScenarioCommandName = "scenario"
 	ResultCommandName   = "result"
 	RunCommandName      = "run"
@@ -30,8 +31,25 @@ func RequireCredential() bool {
 	return true
 }
 
-type RunCommand struct {
+type VersionCommand struct {
+	Version  string
+	Revision string
 }
+
+func (v *VersionCommand) Help() string {
+	return "Print cli version & revision"
+}
+
+func (v *VersionCommand) Run(args []string) int {
+	fmt.Printf("Version: %s\nRevision: %s\n", v.Version, v.Revision)
+	return ExitCodeOk
+}
+
+func (r *VersionCommand) Synopsis() string {
+	return "Print cli version"
+}
+
+type RunCommand struct{}
 
 func (r *RunCommand) Help() string {
 	return "Run test plan"
