@@ -9,7 +9,7 @@ import (
 )
 
 // These variables are set in build step
-const (
+var (
 	Version  = "unset"
 	Revision = "unset"
 )
