@@ -26,3 +26,13 @@ archives:
         format: zip
 release:
   prerelease: auto
+brews:
+  - tap:
+      owner: koukikitamura
+      name: homebrew-autify-cli
+    folder: Formula
+    homepage: 'https://github.com/koukikitamura/autify-cli'
+    description: 'Autify client'
+    license: "MIT"
+    install: |
+      bin.install "atf"

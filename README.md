@@ -1,6 +1,12 @@
 # autify-cli
 This package provides a unified command line interface to Autify.
 
+## Installation
+macOS
+```
+brew install koukikitamura/autify-cli/autify-cli
+```
+
 ## Configuration
 Before using the autify-cli, you need to configure your credentials. You can use environment variable.
 
