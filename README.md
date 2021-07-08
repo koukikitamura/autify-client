@@ -2,9 +2,19 @@
 This package provides a unified command line interface to Autify.
 
 ## Installation
-macOS
+### macOS
 ```
 brew install koukikitamura/autify-cli/autify-cli
+```
+
+### Linux
+Download TAR archive from github release page.
+```
+curl -LSfs https://raw.githubusercontent.com/koukikitamura/autify-cli/main/scripts/install.sh | \
+  sh -s -- \
+    --git koukikitamura/autify-cli \
+    --target autify-cli_linux_x86_64 \
+    --to /usr/local/bin
 ```
 
 ## Configuration
@@ -20,7 +30,7 @@ An autify-cli command has the following structure:
 $ atf <command> [options]
 ```
 
-To run test plan and wait excution, the command would be:
+To run test plan and wait to finish, the command would be:
 ```
 $ atf run --project-id=999 --plan-id=999
 {"id":999,"status":"passed","duration":26251,"started_at":"2021-03-28T11:03:31.288Z","finished_at":"2021-03-28T11:03:57.54Z","created_at":"2021-03-28T11:03:04.716Z","updated_at":"2021-03-28T11:04:00.738Z","test_plan":{"id":999,"name":"main flow","created_at":"2021-03-26T08:25:12.987Z","updated_at":"2021-03-26T08:33:45.462Z"}}
