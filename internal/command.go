@@ -61,7 +61,7 @@ func (r *RunCommand) Run(args []string) int {
 	}
 
 	var projectId, planId, interval, timeout int
-	var debug bool
+	var debug, showSpinner bool
 
 	flags := flag.NewFlagSet(RunCommandName, flag.ContinueOnError)
 	flags.IntVar(&projectId, "project-id", -1, "Specify project id")
@@ -69,6 +69,7 @@ func (r *RunCommand) Run(args []string) int {
 	flags.IntVar(&interval, "interval", 3, "Specify interval, unit is second")
 	flags.IntVar(&timeout, "timeout", 3, "Specify interval, unit is minute")
 	flags.BoolVar(&debug, "debug", false, "Print excution logs")
+	flags.BoolVar(&showSpinner, "spinner", true, "Show spinner for waiting to finnish test")
 
 	if err := flags.Parse(args); err != nil {
 		return ExitCodeError
@@ -94,10 +95,12 @@ func (r *RunCommand) Run(args []string) int {
 	ticker := time.NewTicker(time.Duration(interval) * time.Second)
 	defer ticker.Stop()
 
-	s := spinner.New(spinner.CharSets[12], 100*time.Millisecond)
-	s.Prefix = "Waiting for test plan to finish. "
-	s.Start()
-	defer s.Stop()
+	if showSpinner {
+		s := spinner.New(spinner.CharSets[12], 100*time.Millisecond)
+		s.Prefix = "Waiting for test plan to finish. "
+		s.Start()
+		defer s.Stop()
+	}
 
 	var testResult *TestPlanResult
 
