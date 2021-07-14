@@ -119,7 +119,9 @@ func (r *RunCommand) Run(args []string) int {
 				testResult.Status != TestPlanStatusRunning {
 				jsonStr, err := json.Marshal(*testResult)
 
-				fmt.Print("\r\033[K")
+				if showSpinner {
+					fmt.Print("\r\033[K")
+				}
 				if err != nil {
 					logrus.Errorf("%+v", err)
 					return ExitCodeError
