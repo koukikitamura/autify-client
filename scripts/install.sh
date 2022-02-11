@@ -3,7 +3,7 @@
 # Original: https://github.com/japaric/trust/blob/gh-pages/install.sh
 
 # ./install.sh \
-#   --git koukikitamura/autify-cli \
+#   --git koukikitamura/autify-client \
 #   --target autify-cli_darwin_x86_64 \
 #   --to ./usr/local/bin
 

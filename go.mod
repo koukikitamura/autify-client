@@ -1,4 +1,4 @@
-module github.com/koukikitamura/autify-cli
+module github.com/koukikitamura/autify-client
 
 go 1.14
 
