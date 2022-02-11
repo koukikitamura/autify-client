@@ -1,5 +1,5 @@
 REVISION := $(shell git rev-parse --short HEAD)
-LDFLAGS := "-X main.revision=$(REVISION)"
+LDFLAGS := "-X main.Revision=$(REVISION)"
 
 build:
 	go build -ldflags $(LDFLAGS) -o atf
