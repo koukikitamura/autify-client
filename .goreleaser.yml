@@ -5,7 +5,7 @@ before:
   hooks:
     - go mod tidy
 builds:
-  - main: .
+  - main: ./cmd/cli/main.go
     binary: atf
     ldflags:
       - -s -w

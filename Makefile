@@ -1,8 +1,8 @@
 REVISION := $(shell git rev-parse --short HEAD)
 LDFLAGS := "-X main.Revision=$(REVISION)"
 
-build:
-	go build -ldflags $(LDFLAGS) -o atf
+build-cli:
+	go build -ldflags $(LDFLAGS) -o dist/atf ./cmd/cli/main.go
 
 test:
 	go test ./...

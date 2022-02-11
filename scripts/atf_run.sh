@@ -4,7 +4,7 @@ DIR=$(cd $(dirname $BASH_SOURCE); pwd)
 ROOT_DIR="${DIR}/.."
 cd ${ROOT_DIR}
 
-go build -o ./tmp/atf
+go build -o ./tmp/atf cmd/cli/main.go
 
 ./tmp/atf run --project-id=$AUTIFY_TEST_PROJECT_ID --plan-id=$AUTIFY_TEST_PLAN_ID
 
