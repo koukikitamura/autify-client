@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/briandowns/spinner"
+	"github.com/koukikitamura/autify-client/pkg/client"
 	"github.com/sirupsen/logrus"
 )
 
@@ -23,8 +24,8 @@ const (
 )
 
 func RequireCredential() bool {
-	if ok := CheckAccessToken(); !ok {
-		fmt.Printf("Require %s environment variable\n", AccessTokenEnvName)
+	if ok := client.CheckAccessToken(); !ok {
+		fmt.Printf("Require %s environment variable\n", client.AccessTokenEnvName)
 		return false
 	}
 
@@ -84,7 +85,7 @@ func (r *RunCommand) Run(args []string) int {
 		logrus.SetLevel(logrus.DebugLevel)
 	}
 
-	autify := NewAutfiy(GetAccessToken())
+	autify := client.NewAutfiy(client.GetAccessToken())
 
 	runResult, err := autify.RunTestPlan(planId)
 	if err != nil {
@@ -102,7 +103,7 @@ func (r *RunCommand) Run(args []string) int {
 		defer s.Stop()
 	}
 
-	var testResult *TestPlanResult
+	var testResult *client.TestPlanResult
 
 	for {
 		select {
@@ -114,9 +115,9 @@ func (r *RunCommand) Run(args []string) int {
 				logrus.Errorf("%+v", err)
 				return ExitCodeError
 			}
-			if testResult.Status != TestPlanStatuWaiting &&
-				testResult.Status != TestPlanStatusQueuing &&
-				testResult.Status != TestPlanStatusRunning {
+			if testResult.Status != client.TestPlanStatuWaiting &&
+				testResult.Status != client.TestPlanStatusQueuing &&
+				testResult.Status != client.TestPlanStatusRunning {
 				jsonStr, err := json.Marshal(*testResult)
 
 				fmt.Print("\r\033[K")
@@ -171,7 +172,7 @@ func (s *ScenarioCommand) Run(args []string) int {
 		logrus.SetLevel(logrus.DebugLevel)
 	}
 
-	autify := NewAutfiy(GetAccessToken())
+	autify := client.NewAutfiy(client.GetAccessToken())
 
 	scenario, err := autify.FetchScenario(projectId, scenarioId)
 	if err != nil {
@@ -225,7 +226,7 @@ func (r *ResultCommand) Run(args []string) int {
 		logrus.SetLevel(logrus.DebugLevel)
 	}
 
-	autify := NewAutfiy(GetAccessToken())
+	autify := client.NewAutfiy(client.GetAccessToken())
 
 	result, err := autify.FetchResult(projectId, resultId)
 	if err != nil {
