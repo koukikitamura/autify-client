@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/koukikitamura/autify-cli/internal"
+	"github.com/koukikitamura/autify-client/internal"
 	"github.com/mitchellh/cli"
 	"github.com/sirupsen/logrus"
 )

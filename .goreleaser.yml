@@ -14,7 +14,7 @@ builds:
     env:
       - CGO_ENABLED=0
 archives:
-  - name_template: '{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
+  - name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
     replacements:
       darwin: darwin
       linux: linux
@@ -31,8 +31,8 @@ brews:
       owner: koukikitamura
       name: homebrew-autify-cli
     folder: Formula
-    homepage: 'https://github.com/koukikitamura/autify-cli'
-    description: 'Autify client'
+    homepage: "https://github.com/koukikitamura/autify-client"
+    description: "Autify CLI client"
     license: "MIT"
     install: |
       bin.install "atf"
