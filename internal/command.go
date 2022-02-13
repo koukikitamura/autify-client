@@ -218,7 +218,9 @@ func (r *ResultCommand) Run(args []string) int {
 	}
 
 	if projectId < 0 || resultId < 0 {
-		logrus.Error("project-id and result-id is greater than or equal to zero.")
+		//logrus.Error("project-id and result-id is greater than or equal to zero.")
+		logrus.Error("ERRO[0000] Please pass the project-id.")
+		logrus.Error("ERRO[0000] Please pass the result-id.")
 		return ExitCodeError
 	}
 
