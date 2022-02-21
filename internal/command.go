@@ -76,8 +76,12 @@ func (r *RunCommand) Run(args []string) int {
 		return ExitCodeError
 	}
 
-	if projectId < 0 || planId < 0 {
-		logrus.Error("project-id and plan-id is greater than or equal to zero.")
+	if projectId < 1 {
+		logrus.Error("The project-id is required.")
+		return ExitCodeError
+	}
+	if planId < 1 {
+		logrus.Error("The plan-id is required.")
 		return ExitCodeError
 	}
 
@@ -217,9 +221,12 @@ func (r *ResultCommand) Run(args []string) int {
 		return ExitCodeError
 	}
 
-	if projectId < 0 || resultId < 0 {
-		logrus.Error("ERRO[0000] Please pass the project-id.")
-		logrus.Error("ERRO[0000] Please pass the result-id.")
+	if projectId < 1 {
+		logrus.Error("Please pass the project-id.")
+		return ExitCodeError
+	}
+	if resultId < 1 {
+		logrus.Error("Please pass the result-id.")
 		return ExitCodeError
 	}
 
