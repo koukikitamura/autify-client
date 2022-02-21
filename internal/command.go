@@ -167,8 +167,12 @@ func (s *ScenarioCommand) Run(args []string) int {
 		return ExitCodeError
 	}
 
-	if projectId < 0 || scenarioId < 0 {
-		logrus.Error("project-id and scenario-id is greater than or equal to zero.")
+	if projectId < 1 {
+		logrus.Error("The project-id is required.")
+		return ExitCodeError
+	}
+	if scenarioId < 1 {
+		logrus.Error("The scenario-id is required.")
 		return ExitCodeError
 	}
 
